@@ -10,6 +10,18 @@
 
 **CodeLens** is a modern SaaS platform designed to deeply analyze GitHub repositories, calculate cyclomatic complexity, flag architectural code smells, and instantly generate ready-to-merge patches using large language models. Instead of merely linting your code, CodeLens contextually understands your repository's logic and writes the fixes for you.
 
+## 📖 About CodeLens
+
+CodeLens was built with a simple mission: **to eliminate technical debt autonomously.**
+
+Modern software teams spend countless hours reviewing code, debating architectural choices, and manually refactoring messy codebases. CodeLens acts as an always-on AI engineer that not only spots the problems but actually writes the code to fix them. 
+
+**Key Capabilities:**
+- **Zero-Config Scanning:** Just paste a GitHub URL. No complex CI/CD setup required.
+- **Deep Contextual Understanding:** We don't just look at single lines. We scan your entire Abstract Syntax Tree (AST) to understand how files relate to each other.
+- **Auto-Remediation:** For every critical issue identified, CodeLens provides a precise, syntax-perfect code patch that you can apply with one click.
+- **Executive Health Scoring:** Instantly see if a repository is safe to merge or if it requires heavy refactoring, graded on a strict 0-100 scale.
+
 ## 🛠️ Tech Stack
 
 CodeLens is built using a highly performant, decoupled architecture:
