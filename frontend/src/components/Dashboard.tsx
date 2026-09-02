@@ -3,6 +3,7 @@ import { useState, useMemo } from 'react';
 import { Activity, Code, FileText, CheckCircle, AlertTriangle, ShieldCheck, Home, Settings, ArrowLeft, GitBranch, Zap, Terminal, Bug } from 'lucide-react';
 import Editor from '@monaco-editor/react';
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip as RechartsTooltip, Cell } from 'recharts';
+import Image from 'next/image';
 
 export default function Dashboard({ data }: { data: any }) {
   const [selectedIssue, setSelectedIssue] = useState<any>(null);
@@ -36,8 +37,7 @@ export default function Dashboard({ data }: { data: any }) {
       <nav className="h-16 flex items-center justify-between px-6 border-b border-white/10 bg-[#0a0a0a] sticky top-0 z-50">
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2">
-            <ShieldCheck size={20} className="text-blue-500" />
-            <span className="font-bold text-white tracking-tight">CodeLens</span>
+            <Image src="/logo.png" alt="CodeLens Logo" width={120} height={34} className="object-contain h-8 w-auto" />
           </div>
           <div className="h-6 w-px bg-white/10 mx-2" />
           <div className="flex items-center gap-2 text-sm text-slate-400">

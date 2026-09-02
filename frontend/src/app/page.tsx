@@ -3,6 +3,7 @@ import { useState } from 'react';
 import Dashboard from '@/components/Dashboard';
 import AuthModal from '@/components/AuthModal';
 import Link from 'next/link';
+import Image from 'next/image';
 import { ShieldCheck, ChevronRight, Zap, Code2, Activity, GitBranch } from 'lucide-react';
 
 export default function Home() {
@@ -62,8 +63,7 @@ export default function Home() {
       {/* Top Navbar */}
       <nav className="h-16 flex items-center justify-between px-6 border-b border-white/10 bg-[#0a0a0a]/80 backdrop-blur-md sticky top-0 z-50">
         <div className="flex items-center gap-3">
-          <ShieldCheck size={24} className="text-blue-500" />
-          <span className="font-bold text-lg tracking-tight text-white">CodeLens Center</span>
+          <Image src="/logo.png" alt="CodeLens Logo" width={140} height={40} className="object-contain h-10 w-auto" />
         </div>
         <div className="flex gap-4">
           <button onClick={() => setIsAuthModalOpen(true)} className="text-sm font-medium text-slate-400 hover:text-white transition-colors px-3 py-2">Log in</button>
