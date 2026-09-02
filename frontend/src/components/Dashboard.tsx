@@ -37,7 +37,7 @@ export default function Dashboard({ data }: { data: any }) {
       <nav className="h-16 flex items-center justify-between px-6 border-b border-white/10 bg-[#0a0a0a] sticky top-0 z-50">
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2">
-            <Image src="/logo.png" alt="CodeLens Logo" width={120} height={34} className="object-contain h-8 w-auto" />
+            <Image src="/logo.png" alt="CodeLens Logo" width={180} height={56} className="object-contain h-14 w-auto scale-105 origin-left" />
           </div>
           <div className="h-6 w-px bg-white/10 mx-2" />
           <div className="flex items-center gap-2 text-sm text-slate-400">

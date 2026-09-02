@@ -63,7 +63,7 @@ export default function Home() {
       {/* Top Navbar */}
       <nav className="h-16 flex items-center justify-between px-6 border-b border-white/10 bg-[#0a0a0a]/80 backdrop-blur-md sticky top-0 z-50">
         <div className="flex items-center gap-3">
-          <Image src="/logo.png" alt="CodeLens Logo" width={140} height={40} className="object-contain h-10 w-auto" />
+          <Image src="/logo.png" alt="CodeLens Logo" width={180} height={56} className="object-contain h-14 w-auto" />
         </div>
         <div className="flex gap-4">
           <button onClick={() => setIsAuthModalOpen(true)} className="text-sm font-medium text-slate-400 hover:text-white transition-colors px-3 py-2">Log in</button>
