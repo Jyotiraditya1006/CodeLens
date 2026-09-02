@@ -36,24 +36,16 @@ The following flowchart demonstrates how CodeLens safely clones, analyzes, and p
 ```mermaid
 graph TD
     A[User Pastes GitHub URL] -->|Clicks Scan| B[Next.js Frontend]
-    B --> |POST /api/analyze/github| C(FastAPI Backend)
-    
-    subgraph Backend Architecture
+    B -->|POST /api/analyze/github| C(FastAPI Backend)
     C --> D[Git Service: Clone Repo to Temp Dir]
     D --> E[Analysis Service: Scan AST & LOC]
-    E --> F[Filter & Select Problematic Files]
+    E --> F[Filter Problematic Files]
     F --> G[Gemini 1.5 Pro API]
-    G --> |Generates Strict JSON Patch| H[Calculate Health Score]
-    end
-    
-    H --> I[Return Analysis & Insights payload]
-    I --> B
-    
-    subgraph User Dashboard
-    B --> J[Render Health Dashboard]
+    G -->|Generates Strict JSON Patch| H[Calculate Health Score]
+    H --> I[Return Analysis & Insights]
+    I --> J[Render Health Dashboard]
     J --> K[User Clicks Actionable Insight]
     K --> L[Monaco Editor: Side-by-Side Review]
-    end
 ```
 
 ## 💻 Getting Started (Local Development)
