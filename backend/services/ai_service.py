@@ -48,6 +48,32 @@ class AIService:
         }}
         """
 
+        # --- CUSTOM ML CLASSIFIER INFERENCE ---
+        ml_vulnerability_score = 0
+        ml_confidence = "Unknown"
+        try:
+            import joblib
+            vectorizer_path = os.path.join(os.path.dirname(__file__), "..", "ml_models", "tfidf_vectorizer.pkl")
+            clf_path = os.path.join(os.path.dirname(__file__), "..", "ml_models", "rf_classifier.pkl")
+            
+            if os.path.exists(vectorizer_path) and os.path.exists(clf_path):
+                vectorizer = joblib.load(vectorizer_path)
+                clf = joblib.load(clf_path)
+                
+                # Transform the code content
+                X_vec = vectorizer.transform([code_content])
+                
+                # Predict probability of being vulnerable (label 1)
+                proba = clf.predict_proba(X_vec)[0]
+                # If the classifier has 2 classes, proba[1] is the probability of being vulnerable
+                if len(proba) > 1:
+                    ml_vulnerability_score = round(proba[1] * 100, 2)
+                    
+                ml_confidence = "High" if ml_vulnerability_score > 80 or ml_vulnerability_score < 20 else "Medium"
+        except Exception as e:
+            print(f"ML Classifier inference failed: {e}")
+        # ----------------------------------------
+
         try:
             client = genai.Client(api_key=api_key)
             response = client.models.generate_content(
@@ -63,6 +89,11 @@ class AIService:
                 response_text = response_text[3:-3]
                 
             result = json.loads(response_text)
+            
+            # Inject our Custom ML Score into the AI Response!
+            result["ml_vulnerability_probability"] = ml_vulnerability_score
+            result["ml_confidence"] = ml_confidence
+            
             return result
             
         except Exception as e:

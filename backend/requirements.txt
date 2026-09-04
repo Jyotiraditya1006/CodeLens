@@ -5,3 +5,7 @@ requests
 python-dotenv
 google-genai
 GitPython
+scikit-learn
+pandas
+numpy
+joblib

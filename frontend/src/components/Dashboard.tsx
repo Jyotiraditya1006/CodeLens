@@ -266,6 +266,12 @@ export default function Dashboard({ data }: { data: any }) {
                     AI Explanations
                   </h3>
                   <p className="text-xs text-slate-400 mt-1">Review the issues detected in this file.</p>
+                  
+                  {selectedIssue.analysis.ml_vulnerability_probability !== undefined && (
+                    <div className={`mt-3 text-[11px] font-bold px-3 py-1.5 rounded-md inline-block ${selectedIssue.analysis.ml_vulnerability_probability > 50 ? 'bg-red-500/20 text-red-400 border border-red-500/30' : 'bg-green-500/20 text-green-400 border border-green-500/30'}`}>
+                      Custom ML Vulnerability Risk: {selectedIssue.analysis.ml_vulnerability_probability}%
+                    </div>
+                  )}
                 </div>
                 
                 <div className="flex-1 overflow-y-auto p-5 space-y-4 custom-scrollbar">
