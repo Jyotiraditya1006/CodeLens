@@ -22,9 +22,10 @@ export default function Home() {
     setLoading(true);
     setError('');
     try {
+      const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
       const endpoint = inputMode === 'github' 
-        ? 'http://localhost:8000/api/analyze/github' 
-        : 'http://localhost:8000/api/analyze/snippet';
+        ? `${baseUrl}/api/analyze/github` 
+        : `${baseUrl}/api/analyze/snippet`;
         
       const payload = inputMode === 'github'
         ? { url: repoUrl }
