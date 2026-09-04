@@ -20,6 +20,10 @@ app.add_middleware(
 class RepoRequest(BaseModel):
     url: str
 
+class SnippetRequest(BaseModel):
+    code: str
+    filename: str = "snippet.txt"
+
 @app.get("/")
 def read_root():
     return {"message": "Welcome to the AI Code Health Analyzer API"}
@@ -27,6 +31,51 @@ def read_root():
 @app.get("/health")
 def health_check():
     return {"status": "ok"}
+
+@app.post("/api/analyze/snippet")
+def analyze_snippet(request: SnippetRequest):
+    try:
+        from services.ai_service import AIService
+        
+        # Count lines for metrics
+        lines = request.code.split('\n')
+        loc = len(lines)
+        size_bytes = len(request.code.encode('utf-8'))
+        
+        # Analyze directly with AI
+        ai_result = AIService.analyze_code(request.filename, request.code)
+        
+        health_score = 100
+        ai_insights = []
+        
+        if not ai_result.get('error'):
+            health_score += ai_result.get('health_score_impact', 0)
+            ai_insights.append({
+                "file": request.filename,
+                "analysis": ai_result
+            })
+            
+        health_score = max(0, min(100, health_score))
+            
+        analysis_results = {
+            "health_score": health_score,
+            "total_files": 1,
+            "total_lines": loc,
+            "file_metrics": [{
+                "path": request.filename,
+                "loc": loc,
+                "size_bytes": size_bytes
+            }],
+            "ai_insights": ai_insights
+        }
+        
+        return {
+            "status": "success",
+            "repository": "Direct Snippet Analysis",
+            "analysis": analysis_results
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 @app.post("/api/analyze/github")
 def analyze_github_repo(request: RepoRequest):
@@ -37,8 +86,6 @@ def analyze_github_repo(request: RepoRequest):
         
         # Analyze the repo
         analysis_results = AnalysisService.scan_directory(repo_path)
-        
-        # TODO: Add AI integration step here
         
         return {
             "status": "success",

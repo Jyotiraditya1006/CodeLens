@@ -8,22 +8,34 @@ import { ShieldCheck, ChevronRight, Zap, Code2, Activity, GitBranch } from 'luci
 
 export default function Home() {
   const [repoUrl, setRepoUrl] = useState('');
+  const [snippetCode, setSnippetCode] = useState('');
+  const [inputMode, setInputMode] = useState<'github' | 'snippet'>('github');
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<any>(null);
   const [error, setError] = useState('');
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
 
-  const analyzeRepo = async () => {
-    if (!repoUrl) return;
+  const handleAnalyze = async () => {
+    if (inputMode === 'github' && !repoUrl) return;
+    if (inputMode === 'snippet' && !snippetCode) return;
+    
     setLoading(true);
     setError('');
     try {
-      const res = await fetch('http://localhost:8000/api/analyze/github', {
+      const endpoint = inputMode === 'github' 
+        ? 'http://localhost:8000/api/analyze/github' 
+        : 'http://localhost:8000/api/analyze/snippet';
+        
+      const payload = inputMode === 'github'
+        ? { url: repoUrl }
+        : { code: snippetCode, filename: "snippet.tsx" };
+
+      const res = await fetch(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ url: repoUrl }),
+        body: JSON.stringify(payload),
       });
-      if (!res.ok) throw new Error("Failed to analyze repository");
+      if (!res.ok) throw new Error(`Failed to analyze ${inputMode}`);
       const json = await res.json();
       setData(json);
     } catch (err: any) {
@@ -100,27 +112,64 @@ export default function Home() {
             </p>
           </div>
 
-          {/* Search / Input Bar (Replicating the Handshake Search Input) */}
-          <div className="w-full max-w-[600px] mb-20 relative">
-            <div className="flex h-14 items-center gap-3 rounded-xl border border-white/20 bg-[#111] px-4 shadow-lg focus-within:border-blue-500 focus-within:ring-1 focus-within:ring-blue-500 transition-all">
-              <GitBranch size={20} className="text-slate-400 shrink-0" />
-              <input 
-                aria-label="Repository URL" 
-                className="h-full w-full bg-transparent text-[16px] text-white outline-none placeholder:text-slate-500" 
-                placeholder="Paste GitHub repository URL to analyze..." 
-                type="text" 
-                value={repoUrl}
-                onChange={(e) => setRepoUrl(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && analyzeRepo()}
-              />
+          {/* Input Area */}
+          <div className="w-full max-w-[700px] mb-20 relative">
+            <div className="flex gap-4 mb-4">
               <button 
-                onClick={analyzeRepo}
-                disabled={loading}
-                className="bg-white text-black px-4 py-1.5 rounded-lg text-sm font-semibold hover:bg-slate-200 disabled:opacity-50 transition-colors shrink-0"
+                onClick={() => setInputMode('github')}
+                className={`text-sm font-semibold px-4 py-2 rounded-lg transition-all ${inputMode === 'github' ? 'bg-blue-600 text-white' : 'bg-white/5 text-slate-400 hover:text-white hover:bg-white/10'}`}
               >
-                {loading ? 'Analyzing...' : 'Run Scan'}
+                GitHub URL
+              </button>
+              <button 
+                onClick={() => setInputMode('snippet')}
+                className={`text-sm font-semibold px-4 py-2 rounded-lg transition-all ${inputMode === 'snippet' ? 'bg-blue-600 text-white' : 'bg-white/5 text-slate-400 hover:text-white hover:bg-white/10'}`}
+              >
+                Code Snippet
               </button>
             </div>
+
+            {inputMode === 'github' ? (
+              <div className="flex h-14 items-center gap-3 rounded-xl border border-white/20 bg-[#111] px-4 shadow-lg focus-within:border-blue-500 focus-within:ring-1 focus-within:ring-blue-500 transition-all">
+                <GitBranch size={20} className="text-slate-400 shrink-0" />
+                <input 
+                  aria-label="Repository URL" 
+                  className="h-full w-full bg-transparent text-[16px] text-white outline-none placeholder:text-slate-500" 
+                  placeholder="Paste GitHub repository URL to analyze..." 
+                  type="text" 
+                  value={repoUrl}
+                  onChange={(e) => setRepoUrl(e.target.value)}
+                  onKeyDown={(e) => e.key === 'Enter' && handleAnalyze()}
+                />
+                <button 
+                  onClick={handleAnalyze}
+                  disabled={loading}
+                  className="bg-white text-black px-4 py-1.5 rounded-lg text-sm font-semibold hover:bg-slate-200 disabled:opacity-50 transition-colors shrink-0"
+                >
+                  {loading ? 'Analyzing...' : 'Run Scan'}
+                </button>
+              </div>
+            ) : (
+              <div className="flex flex-col gap-3 rounded-xl border border-white/20 bg-[#111] p-4 shadow-lg focus-within:border-blue-500 focus-within:ring-1 focus-within:ring-blue-500 transition-all">
+                <textarea 
+                  aria-label="Code Snippet" 
+                  className="w-full h-[200px] bg-transparent text-[14px] font-mono text-white outline-none placeholder:text-slate-500 resize-none custom-scrollbar" 
+                  placeholder="Paste your code snippet here to get AI auto-fixes..." 
+                  value={snippetCode}
+                  onChange={(e) => setSnippetCode(e.target.value)}
+                />
+                <div className="flex justify-end pt-3 border-t border-white/10">
+                  <button 
+                    onClick={handleAnalyze}
+                    disabled={loading || !snippetCode.trim()}
+                    className="bg-white text-black px-6 py-2 rounded-lg text-sm font-semibold hover:bg-slate-200 disabled:opacity-50 transition-colors"
+                  >
+                    {loading ? 'Analyzing...' : 'Analyze Snippet'}
+                  </button>
+                </div>
+              </div>
+            )}
+            
             {error && <p className="text-red-400 text-sm mt-3">{error}</p>}
           </div>
 
