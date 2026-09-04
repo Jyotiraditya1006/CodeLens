@@ -51,7 +51,7 @@ class AIService:
         """
 
         try:
-            model = genai.GenerativeModel('gemini-1.5-pro-latest')
+            model = genai.GenerativeModel('gemini-1.5-pro')
             response = model.generate_content(prompt)
             
             # Extract JSON from the markdown code block if present
