@@ -1,5 +1,5 @@
 import os
-import google.generativeai as genai
+from google import genai
 from typing import Dict, Any
 from dotenv import load_dotenv
 import json
@@ -8,8 +8,6 @@ load_dotenv()
 
 # Configure the AI API using the key from environment variables
 api_key = os.getenv("GEMINI_API_KEY")
-if api_key:
-    genai.configure(api_key=api_key)
 
 class AIService:
     @staticmethod
@@ -51,8 +49,11 @@ class AIService:
         """
 
         try:
-            model = genai.GenerativeModel('gemini-1.5-pro')
-            response = model.generate_content(prompt)
+            client = genai.Client(api_key=api_key)
+            response = client.models.generate_content(
+                model='gemini-3.6-flash',
+                contents=prompt
+            )
             
             # Extract JSON from the markdown code block if present
             response_text = response.text.strip()
